@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="es">
+    <head>
+        <meta charset="utf-8" />
+        <title>TITANIC v/s ICEBERG</title>
+        <style>
+            body {
+                font-family: sans-serif;
+                color: #333;
+                background: #fcfeff;
+            }
+
+            div {
+                width: min(95%, 700px);
+                margin: 0 auto;
+            }
+
+            header {
+                text-align: center;
+            }
+
+            header svg {
+                width: 75%;
+            }
+
+            h1 {
+                font-size: 2rem;
+                font-weight: 200;
+            }
+
+            h2 {
+                font-size: 1.2rem;
+                font-weight: 400;
+                margin-top: 2rem;
+            }
+
+            p {
+                margin: 0.9rem 0.3rem;
+            }
+
+            .donas {
+                display: flex;
+                gap: 1rem;
+                justify-content: space-around;
+                flex-wrap: wrap;
+                margin: 1.5rem 0;
+            }
+
+            .dona-wrap {
+                width: 180px;
+                text-align: center;
+            }
+
+            footer {
+                border-top: 1px solid #eee;
+                margin-top: 3rem;
+                padding-bottom: 3rem;
+            }
+
+            #cierre {
+                text-align: center;
+                margin: 2rem 0;
+            }
+
+            #cierre img {
+                max-width: 100%;
+                height: auto;
+            }
+        </style>
+    </head>
+    <body>
+        <div>
+
+            <header>
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" fill="none" stroke="#111" stroke-width="2">
+                    <polygon points="200,20 250,100 300,150 250,350 200,380 125,275 90,200 100,125 180,25" />
+                    <line x1="10" y1="100" x2="390" y2="100" />
+                </svg>
+
+                <h1>TITANIC v/s ICEBERG</h1>
+            </header>
+
+            <main>
+                <p>Usaremos datos disponibles en línea. Con ellos visualizaremos el destino de las <span id="total"></span> personas a bordo del Titanic, divididas en tres clases:</p>
+
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 892 150">
+                    <g id="grafico"></g>
+                </svg>
+
+                <h2>Supervivencia por clase</h2>
+                <p>Porcentaje de pasajeros que sobrevivieron según su clase:</p>
+
+                <div class="donas">
+                    <div class="dona-wrap">
+                        <svg width="100%" viewBox="0 0 42 42" class="donut">
+                            <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#ddd" stroke-width="3"></circle>
+                            <circle id="dona1" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#333" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="0"></circle>
+                            <text id="dona1-pct" x="21" y="19" font-size="9" dominant-baseline="middle" text-anchor="middle">—</text>
+                            <text x="21" y="25" font-size="3" dominant-baseline="middle" text-anchor="middle">PRIMERA CLASE</text>
+                        </svg>
+                    </div>
+                    <div class="dona-wrap">
+                        <svg width="100%" viewBox="0 0 42 42" class="donut">
+                            <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#ddd" stroke-width="3"></circle>
+                            <circle id="dona2" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#666" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="0"></circle>
+                            <text id="dona2-pct" x="21" y="19" font-size="9" dominant-baseline="middle" text-anchor="middle">—</text>
+                            <text x="21" y="25" font-size="3" dominant-baseline="middle" text-anchor="middle">SEGUNDA CLASE</text>
+                        </svg>
+                    </div>
+                    <div class="dona-wrap">
+                        <svg width="100%" viewBox="0 0 42 42" class="donut">
+                            <circle cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#ddd" stroke-width="3"></circle>
+                            <circle id="dona3" cx="21" cy="21" r="15.91549430918954" fill="transparent" stroke="#999" stroke-width="3" stroke-dasharray="0 100" stroke-dashoffset="0"></circle>
+                            <text id="dona3-pct" x="21" y="19" font-size="9" dominant-baseline="middle" text-anchor="middle">—</text>
+                            <text x="21" y="25" font-size="3" dominant-baseline="middle" text-anchor="middle">TERCERA CLASE</text>
+                        </svg>
+                    </div>
+                </div>
+            </main>
+
+            <div id="cierre">
+                <img src="https://www.gerdarntz.org/sites/gerdarntz.org/files/GMDH02_00290.gif" />
+            </div>
+
+            <footer>
+            </footer>
+
+        </div>
+
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+        <script>
+            var primera = 0;
+            var segunda = 0;
+            var tercera = 0;
+
+            var primeraViva = 0;
+            var segundaViva = 0;
+            var terceraViva = 0;
+
+            var spanTotal = document.querySelector("#total");
+            var grafico   = document.querySelector("#grafico");
+
+            Papa.parse("https://raw.githubusercontent.com/datasciencedojo/datasets/refs/heads/master/titanic.csv", {
+                download: true,
+                header: true,
+                dynamicTyping: true,
+
+                complete: function (results) {
+
+                    spanTotal.innerHTML = results.data.length;
+
+                    results.data.forEach(function(pasajero) {
+                        if (pasajero.Pclass == 1) {
+                            primera = primera + 1;
+                            if (pasajero.Survived == 1) primeraViva++;
+                        } else if (pasajero.Pclass == 2) {
+                            segunda = segunda + 1;
+                            if (pasajero.Survived == 1) segundaViva++;
+                        } else {
+                            tercera = tercera + 1;
+                            if (pasajero.Survived == 1) terceraViva++;
+                        }
+                    });
+
+                    // Gráfico de barras
+                    grafico.innerHTML =
+                        `<rect x="0" y="0" width="${primera}" height="100" fill="#333"></rect>
+                        <text x="${primera / 2}" y="60" font-size="48" dominant-baseline="middle" text-anchor="middle" fill="#fff">${primera}</text>
+                        <text x="${primera / 2}" y="125" font-size="18" dominant-baseline="middle" text-anchor="middle" fill="#333">PRIMERA CLASE</text>` +
+
+                        `<rect x="${primera}" y="0" width="${segunda}" height="100" fill="#666"></rect>
+                        <text x="${primera + segunda / 2}" y="60" font-size="48" dominant-baseline="middle" text-anchor="middle" fill="#fff">${segunda}</text>
+                        <text x="${primera + segunda / 2}" y="125" font-size="18" dominant-baseline="middle" text-anchor="middle" fill="#333">SEGUNDA CLASE</text>` +
+
+                        `<rect x="${primera + segunda}" y="0" width="${tercera}" height="100" fill="#999"></rect>
+                        <text x="${primera + segunda + tercera / 2}" y="60" font-size="48" dominant-baseline="middle" text-anchor="middle" fill="#fff">${tercera}</text>
+                        <text x="${primera + segunda + tercera / 2}" y="125" font-size="18" dominant-baseline="middle" text-anchor="middle" fill="#333">TERCERA CLASE</text>`;
+
+                    // Donas de supervivencia
+                    function actualizarDona(id, idPct, vivos, total) {
+                        var pct = Math.round((vivos / total) * 100);
+                        document.getElementById(id).setAttribute("stroke-dasharray", pct + " " + (100 - pct));
+                        document.getElementById(idPct).textContent = pct + "%";
+                    }
+
+                    actualizarDona("dona1", "dona1-pct", primeraViva, primera);
+                    actualizarDona("dona2", "dona2-pct", segundaViva, segunda);
+                    actualizarDona("dona3", "dona3-pct", terceraViva, tercera);
+
+                }
+            });
+        </script>
+    </body>
+</html>
